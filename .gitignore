@@ -1,0 +1,7 @@
+# Generated folders/files, no reason to include them.
+__pycache__/
+*.log
+
+# Used for testing.
+.env
+test.py
