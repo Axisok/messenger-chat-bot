@@ -5,3 +5,6 @@ __pycache__/
 # Used for testing.
 .env
 test.py
+
+# People will have to update it anyways, so I'm doing this.
+chromedriver.exe

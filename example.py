@@ -1,34 +1,87 @@
-from bot import MessengerBot
+from bot import MessengerBot, command
+import time
+import random
+import sys
 
-# If there's a default email and password it'll log in immediately, no need to call login() yourself.
-# It'll also keep the credentials and use them if you don't pass anything on future login() calls.
-# If your internet connection is on the slow side use a bigger ajax_time.
-bot = MessengerBot(safe_mode=True, default_email="YOUR_EMAIL", default_password="YOUR_PASSWORD", ajax_time=1.5)
+# An example bot.
+# Uses most of the functionalities of the framework, to show how they work.
 
-# We're getting the list of conversations here.
-conversations = bot.get_conversations()
-print(f"Conversations available for this account: {conversations}")
+# Credentials the bot will use, it's heavily recommended not to put them in plain text like this, especially if you're planning to share your code.
+email = "EMAIL"
+password = "PASSWORD"
 
-# Log out them back in just for fun.
-bot.logout()
-bot.login()
+# The conversation link the bot will go to, use the part right after /t/.
+conversation = "CONVERSATION"
 
-# Let's go through some conversations, 5 at most.
-for i in range(0, min(5, len(conversations))):
-	# Get the conversation.
-	conversation = conversations[i]
+# This shows how you can easily manage command names outside of the command decorator.
+roulette_names = ["roulette", "roll", "random", "rand"]
 
-	# Go to that conversation.
-	bot.set_conversation(conversation.link)
+class MyBot(MessengerBot):
 
-	# Run some fun commands.
-	print(f"People on conversation {conversation}: {bot.get_participants()}")
-	print(f"Messages on conversation {conversation}: {bot.messages_detailed()}")
+	def __init__(self):
 
-	# Unless you disable safe mode, this won't actually send anything.
-	# Also notice how you can pass a conversation argument, this is very useful as it makes sure you're there before doing anything.
-	# If, for whatever reason, this conversation link doesn't exist it'll just not send anything.
-	bot.send_message(f"Hey {conversation.name}! This is a test.", conversation.link)
+		# Giving a default email and password makes the bot automatically log in, so we don't need to call that.
+		# safe_mode=True means messages will be written but not sent, headless=True means the browser is invisible.
+		super().__init__(default_email=email, default_password=password, safe_mode=True, headless=True)
+		# Start up might take a little while.
 
-# Always call this method so the application actually stops.
-bot.quit()
+		# Because we're logged in, this'll log us out, then in again.
+		# Because default credentials were set already, this will use those if not given any arguments.
+		self.login()
+
+		# Make it so the bot can be called with "hey @Name_of_the_Bot" in addition to existing prefixes.
+		# {bot} in this case is replaced with the name.
+		self.command_prefixes.append("hey @{bot}")
+
+		# Try to go to the desired conversation. If we fail, quit the program.
+		if (not self.set_conversation(conversation)):
+			self.quit()
+			sys.exit()
+
+	@command("hi", "hey", "hello", "yo", "sup", "whats up")
+	def hi(self, command):
+
+		# The \t is for the mention to work, it's a hack and will hopefully be changed in the near future.
+		# We use two y's so it doesn't trigger the command.
+		self.send_message(f"Heyy, it's @{command.message.author}\t!")
+
+	@command(*roulette_names)
+	def roulette(self, command):
+
+		# Simple random number generator command, it crashes with negative numbers but there's a try/except on every command so it's ok.
+		if (command.args[1].isnumeric()):
+			n = random.randint(0, int(float(command.args[1])))
+
+			# You can pass a conversation argument, so it makes sure you're at that conversation before sending the message.
+			# This is very useful if you want to go back and forth between multiple conversations, but isn't ideal for a command based bot.
+			self.send_message(f"You got a {n}, @{command.message.author}\t.", conversation)
+
+	@command("die", "go sleep", "time to sleep", "go away", "everyone hates you", "everybody hates you", "no one loves you")
+	def die(self, command):
+		self.send_message(f"Wow, ok then...")
+		# Closes the window, then exits.
+		self.quit()
+		sys.exit()
+
+bot = MyBot()
+
+while (True):
+
+	# Note that new messages are only detected after the bot enters a conversation, so commands sent before that will return nothing.
+
+	# Check if there's new messages before doing anything else.
+	# new_messages is about 100 times faster than calling handle_commands and possibly have it do nothing.
+	if (bot.new_messages() > 0):
+
+		# Handle any commands given.
+		# The way commands are recognized is by using the prefix and suffix list, if any match with the message it's a command.
+		# Then, it checks if each command is seen at the start of the message (ignoring prefix).
+		# The first command matched is always the one executed.
+		ml = bot.handle_commands()
+
+		# handle_commands also returns the list of new messages it found, so we can print it or use for something interesting.
+		# Here we print the amount because it's not made to be easy to read and it might take multiple lines.
+		print(len(ml))
+
+	# Reducing this value will make the bot a little more responsive, but also require more CPU.
+	time.sleep(1)

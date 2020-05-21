@@ -1,7 +1,11 @@
 # Messenger Chat Bot
-This simple script in [Python](https://www.python.org/) will allow anyone to easily make a simple (or robust, I didn't try though) bot for Messenger, without any need to deal with the mess that is the Messenger HTML structure.
+This simple script made in [Python](https://www.python.org/) will allow anyone to easily make a simple (or robust, I didn't try though) bot for Messenger, without any need to deal with the mess that is the Messenger HTML structure.
 
 Heavily inspired by, incredibly, [a Shrek bot](https://github.com/HenryAlbu/FB-Messenger-Whatsapp-Discord-message-spammer).
+
+### Little warning
+This bot can be considered against Facebook's terms and using it for spamming/similar doesn't help.
+If you get banned it's your own fault.
 
 ## What this script is
  - It's a chat bot generalization for Messenger.
@@ -20,11 +24,16 @@ Heavily inspired by, incredibly, [a Shrek bot](https://github.com/HenryAlbu/FB-M
  - [x] Read messages, optionally only reading the text for a faster scan.
  - [x] List all conversations available, including it's name and link (used for changing conversations).
  - [x] List people in a conversation.
+ - [x] Optionally get only new messages.
+ - [x] Command system (I mean, it kind of works).
+ - [ ] Detect and send mentions on messages (you can send mentions, but it's hacky).
+ - [ ] Faster typing.
  - [ ] Cooler example (current one doesn't print something made for human eyes, unfortunately).
- - [ ] Convenience functionalities such as detecting new messages.
- - [ ] Deal with emojis.
+ - [ ] Deal with emojis (probably won't actually do it).
 
 ## Requirements
+You need to download a [chrome driver](https://chromedriver.chromium.org/) and put into the folder, as the one here might be outdated.
+
 Requirements are very few and are listed in [the requirements file](requirements.txt).
 
 You can quickly install everything if you have pip and use:
@@ -32,7 +41,7 @@ You can quickly install everything if you have pip and use:
 
 ## Setup
  - Clone the repository.
- - Install requirements.
+ - Install requirements, including an updated chromedriver.exe
  - Import MessengerBot on your Python script.
  - That's all the setup needed, really.
 
@@ -54,7 +63,7 @@ Will be improved on later, probably.
  - Read their [Terms of Service](https://www.facebook.com/terms.php) very, very, carefully. Don't just trust me, it's a very grey area in the terms.
  - Don't use this bot for spam, Facebook really hates this and Messenger won't be different.
  - Don't use this bot for commercial purposes, Facebook also hates this.
- - Don't create an account for your bot, Facebook only allows one account for person.
+ - Don't create an account for your bot, Facebook only allows one account for person (though I don't think they can find out).
 
 ## Some general recommendations
  - Don't save your credentials in plain text, find a way to obfuscate it at least a little so people can't just look at a script and get your account.
