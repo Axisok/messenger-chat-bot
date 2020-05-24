@@ -100,7 +100,7 @@ class MessengerBot:
 		# Boot up the driver and saves it so we can do cool stuff later.
 		options = Options()
 		if (headless):
-		 	options.add_argument('--headless')
+			options.add_argument('--headless')
 
 		# You should add a chromedriver.exe somewhere.
 		self.driver = webdriver.Chrome("chromedriver.exe", options=options)
@@ -111,7 +111,7 @@ class MessengerBot:
 		# If not zero, deletes message groups if there's that amount of them or more after reading messages. Performance was not measured, but should be better.
 		# Recommended value is 30, anything below 20 has a decent chance of crashing and offer little to no performance advantage over 30.
 		# Try disabling if having issues.
-		self.auto_delete_messages = 0 # Not implemented
+		self.auto_delete_messages = 30
 	
 		# Represents maximum time allowed for most ajax calls.
 		self.ajax_time = 5
@@ -377,6 +377,7 @@ class MessengerBot:
 		if (self.safe_mode):
 			self.debug_log(f"[SAFE MODE] To {conversation}: {message}")
 		else:
+			self.debug_log(f"To {conversation}: {message}")
 			kl.append(Keys.ENTER)
 
 		# Store here just so it isn't called multiple times.
@@ -390,8 +391,6 @@ class MessengerBot:
 			actions.send_keys(k)
 			actions.perform()
 			time.sleep(.05)
-
-		self.debug_log(f"To {conversation}: {message}")
 		
 		return True
 
@@ -587,7 +586,7 @@ class MessengerBot:
 				self.driver.execute_script("document.querySelectorAll('._3oh-._58nk').forEach(e => e.setAttribute('seen', 'yes'));")
 
 	def _wait_messages(self):
-		''' Internal method to wait for messages to load, then mark all of them as seen.
+		''' Internal method to wait for messages to load.
 
 		'''
 
@@ -599,7 +598,7 @@ class MessengerBot:
 		
 		'''
 		if (self.auto_delete_messages != 0):
-			self.driver.execute_script("var l = document.querySelectorAll(\".__i_._7i2k > div[id^='js'] > div\"); if (s.length > arguments[0]) for (let i = 0; i < s.length - arguments[0]; i ++) s[i].remove()", self.auto_delete_messages)
+			self.driver.execute_script("var l = document.querySelectorAll(\".__i_._7i2k > div[id^='js'] > div\"); if (l.length > arguments[0]) for (let i = 0; i < l.length - arguments[0]; i ++) l[i].remove()", self.auto_delete_messages)
 	
 	def _find_commands(self):
 		''' Finds commands in the object.
