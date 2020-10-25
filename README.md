@@ -49,7 +49,7 @@ You can quickly install everything if you have pip and use:
 You don't, fork it if you want to add anything, tell me if you find a bug.
 
 Why can't you?
-Well, it's not something worth into, both for you and for me.
+Well, it's not something worth putting time into, both for you and for me.
 I put this project here, but I have no time to manage it properly, only development.
 
 ## Example
